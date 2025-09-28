@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Projects - Alaska Fish Counts</title>
+    <meta name="description" content="Special projects map showing Kodiak bear GPS collar data and ADFG Anadromous Waters Catalog layers.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3"></script>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4669726897178289" crossorigin="anonymous"></script>
+    
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://pagead2.googlesyndication.com https://www.googlesyndication.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; img-src 'self' data: https:; connect-src 'self' https://raw.githubusercontent.com https://cdn.jsdelivr.net; font-src 'self' https://cdn.tailwindcss.com;">
+    
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Master Header -->
+    <div id="master-header"></div>
+    <script>
+        fetch('/js/components/master-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('master-header').innerHTML = html;
+            });
+    </script>
+
+    <!-- Breadcrumb Navigation -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2 text-sm">
+                    <li><a href="/" class="text-blue-600 hover:text-blue-800">Home</a></li>
+                    <li class="text-gray-500">/</li>
+                    <li class="text-gray-900 font-medium">Special Projects</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="specialProjectsMap()">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Special Projects</h1>
+            <p class="text-lg text-gray-600 mb-4">Interactive mapping of wildlife and habitat data</p>
+        </div>
+
+        <!-- Project Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Kodiak Bear GPS Project -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">🐻 Kodiak Bear GPS Tracking</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                    GPS collar data from 57 female Kodiak bears during salmon run periods (July-August) from 2008-2015. 
+                    Tracks show individual bear movement patterns across Alaska during peak salmon spawning seasons.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Data Source:</span>
+                        <span class="text-gray-900">U.S. Fish & Wildlife Service</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Study Period:</span>
+                        <span class="text-gray-900">2008-2015</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Sample Size:</span>
+                        <span class="text-gray-900">57 female bears</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">GPS Points:</span>
+                        <span class="text-gray-900" x-text="bearData.length">172,545</span>
+                    </div>
+                </div>
+                <a href="https://catalog.data.gov/dataset/kodiak-bear-gps-collar-fix-location-data" 
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center mt-4 text-sm text-blue-600 hover:text-blue-800">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    View Dataset on Data.gov
+                </a>
+            </div>
+
+            <!-- AWC Habitat Project -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">🌊 Anadromous Waters Catalog</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                    Alaska Department of Fish and Game's comprehensive catalog of anadromous fish habitat. 
+                    Shows critical spawning and rearing areas for salmon species across Alaska.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Data Source:</span>
+                        <span class="text-gray-900">Alaska Department of Fish & Game</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Coverage:</span>
+                        <span class="text-gray-900">Statewide</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Species:</span>
+                        <span class="text-gray-900">5 salmon species</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Waterbodies:</span>
+                        <span class="text-gray-900" x-text="awcData.features.length">6</span>
+                    </div>
+                </div>
+                <a href="https://www.adfg.alaska.gov/sf/SARR/AWC/index.cfm?ADFG=maps.dataFiles" 
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center mt-4 text-sm text-blue-600 hover:text-blue-800">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    View AWC Data Files
+                </a>
+            </div>
+        </div>
+
+        <!-- Map Controls -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Map Controls</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Layers</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="showBearData" @change="toggleBearLayer" class="mr-2">
+                            <span class="text-sm">Kodiak Bear Tracks</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="showAWCData" @change="toggleAWCLayer" class="mr-2">
+                            <span class="text-sm">Anadromous Waters</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="showFishCounts" @change="toggleFishCountLayer" class="mr-2">
+                            <span class="text-sm">Fish Count Stations</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bear Data Filter</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="filterByActivity" @change="updateBearLayer" class="mr-2">
+                            <span class="text-sm">High Activity Only (>50%)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="filterByYear" @change="updateBearLayer" class="mr-2">
+                            <span class="text-sm">Recent Years (2013-2015)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="filterByQuality" @change="updateBearLayer" class="mr-2">
+                            <span class="text-sm">High Quality GPS Only (PDOP < 5)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" x-model="showGPSPoints" @change="updateBearLayer" class="mr-2">
+                            <span class="text-sm">Show Individual GPS Points</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Map Info</label>
+                    <div class="text-sm text-gray-600">
+                        <div>Bear Tracks: <span x-text="visibleBearPoints">0</span></div>
+                        <div>AWC Features: <span x-text="visibleAWCFeatures">0</span></div>
+                        <div>Fish Stations: <span x-text="visibleFishStations">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bear Selection Dropdown -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6" x-show="showBearData">
+            <!-- Header Dropdown -->
+            <div class="mb-4">
+                <div class="relative">
+                    <select class="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All bears selected</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggle Menu Header -->
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-900 mb-3 uppercase tracking-wide">BEAR TOGGLE MENU</h3>
+                <div class="flex gap-2">
+                    <button @click="selectAllBears()" class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                        Show All
+                    </button>
+                    <button @click="deselectAllBears()" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
+                        Hide All
+                    </button>
+                    <button @click="toggleYears()" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors">
+                        Toggle Years
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bear List -->
+            <div class="max-h-80 overflow-y-auto border border-gray-200 rounded-lg">
+                <div class="space-y-1 p-2">
+                    <template x-for="bearId in Object.keys(selectedBears).sort()" :key="bearId">
+                        <div class="flex items-center justify-between p-3 rounded-lg transition-colors" 
+                             :style="`background-color: ${getBearColor(bearId)}20`">
+                            <!-- Left side: Color dot and bear info -->
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 rounded-full mr-3" :style="`background-color: ${getBearColor(bearId)}`"></div>
+                                <div>
+                                    <div class="font-medium" :style="`color: ${getBearColor(bearId)}`" x-text="bearId"></div>
+                                    <div class="text-sm text-gray-500" x-text="getBearDataCount(bearId) + ' points available'"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Toggle switch -->
+                            <div class="flex items-center">
+                                <div class="text-sm text-gray-600 mr-2" x-text="getBearDataCount(bearId) + '/' + getBearDataCount(bearId)"></div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" x-model="selectedBears[bearId]" @change="toggleBearTrack(bearId)" class="sr-only peer">
+                                    <div class="w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-opacity-80 transition-colors"
+                                         :style="`background-color: ${getBearColor(bearId)}`"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Map -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Interactive Map</h2>
+            
+            <!-- Map Legend -->
+            <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Map Legend</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-2">Bear Tracks</h4>
+                        <div class="space-y-1">
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-red-500 mr-2"></div>
+                                <span class="text-gray-600">Bear 001</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-blue-500 mr-2"></div>
+                                <span class="text-gray-600">Bear 002</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-green-500 mr-2"></div>
+                                <span class="text-gray-600">Bear 003</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-yellow-500 mr-2"></div>
+                                <span class="text-gray-600">Bear 004</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-purple-500 mr-2"></div>
+                                <span class="text-gray-600">Bear 005</span>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                                <span class="text-gray-600">Track Start (Large)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                                <span class="text-gray-600">Track End (Large)</span>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <div class="w-2 h-2 bg-gray-500 rounded-full mr-2"></div>
+                                <span class="text-gray-600">GPS Points</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Each bear has a unique color. Coverage: All of Alaska. GPS Quality: PDOP < 15 (standard) or < 5 (high quality filter)
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-2">AWC Waterbodies</h4>
+                        <div class="space-y-1">
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-blue-500 mr-2"></div>
+                                <span class="text-gray-600">Chinook</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-red-500 mr-2"></div>
+                                <span class="text-gray-600">Sockeye</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-green-500 mr-2"></div>
+                                <span class="text-gray-600">Coho</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-pink-500 mr-2"></div>
+                                <span class="text-gray-600">Pink</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-1 bg-yellow-500 mr-2"></div>
+                                <span class="text-gray-600">Chum</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-2">Fish Stations</h4>
+                        <div class="space-y-1">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                <span class="text-gray-600">Monitoring Station</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="map"></div>
+        </div>
+
+        <!-- Data Sources -->
+        <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Data Sources & Documentation</h2>
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-medium text-gray-900">Kodiak bear GPS collar fix location data¹</h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <strong>Organization:</strong> U.S. Fish and Wildlife Service<br>
+                        <strong>Contact:</strong> Todd Sutherland (todd_sutherland@fws.gov)<br>
+                        <strong>Date:</strong> April 11, 2025<br>
+                        <strong>Description:</strong> GPS radio collar data from 57 female Kodiak bears during salmon run periods (July-August) from 2008-2015<br>
+                        <strong>Visualization:</strong> Individual bear tracks show movement patterns with color-coded activity levels and start/end markers
+                    </p>
+                </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h3 class="text-lg font-medium text-gray-900">Anadromous Waters Catalog (AWC)²</h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <strong>Organization:</strong> Alaska Department of Fish and Game<br>
+                        <strong>Description:</strong> Comprehensive catalog of anadromous fish habitat across Alaska<br>
+                        <strong>Coverage:</strong> Statewide waterbodies with salmon spawning and rearing areas
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footnotes & Citations -->
+        <div class="mt-8 bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Footnotes & Citations</h3>
+            <div class="space-y-3 text-sm text-gray-700">
+                <p><sup>1</sup> U.S. Fish and Wildlife Service. (2025). Kodiak bear GPS collar fix location data. Data.gov. Retrieved from <a href="https://catalog.data.gov/dataset/kodiak-bear-gps-collar-fix-location-data" class="text-blue-600 hover:text-blue-800">https://catalog.data.gov/dataset/kodiak-bear-gps-collar-fix-location-data</a></p>
+                <p><sup>2</sup> Alaska Department of Fish and Game. (2025). Anadromous Waters Catalog. Retrieved from <a href="https://www.adfg.alaska.gov/sf/SARR/AWC/index.cfm?ADFG=maps.dataFiles" class="text-blue-600 hover:text-blue-800">https://www.adfg.alaska.gov/sf/SARR/AWC/index.cfm?ADFG=maps.dataFiles</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Master Footer -->
+    <div id="master-footer"></div>
+    <script>
+        fetch('/js/components/master-footer.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('master-footer').innerHTML = html;
+            });
+    </script>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Alpine.js Component -->
+    <script>
+        function specialProjectsMap() {
+            return {
+                map: null,
+                bearData: [],
+                awcData: null,
+                fishCountData: [],
+                
+                // Layer controls
+                showBearData: true,
+                showAWCData: true,
+                showFishCounts: true,
+                filterByActivity: false,
+                filterByYear: false,
+                filterByQuality: false,
+                showGPSPoints: true,
+                
+                // Layer groups
+                bearLayerGroup: null,
+                awcLayerGroup: null,
+                fishCountLayerGroup: null,
+                
+                // Bear Selection
+                selectedBears: {},
+                bearTrackLayers: {}, // Store individual bear track layers
+                
+                // Counters
+                visibleBearPoints: 0,
+                visibleAWCFeatures: 0,
+                visibleFishStations: 0,
+
+                async init() {
+                    await this.loadData();
+                    this.initMap();
+                    this.addLayers();
+                },
+
+                async loadData() {
+                    try {
+                        // Load bear GPS data
+                        const bearResponse = await fetch('/special-projects/data/kodiak-bear-gps-data.json');
+                        const bearData = await bearResponse.json();
+                        this.bearData = bearData.data;
+                        
+                        // Load AWC data
+                        const awcResponse = await fetch('/special-projects/data/awc-layers/awc-waterbodies.geojson');
+                        this.awcData = await awcResponse.json();
+                        
+                        // Load fish count stations (sample data)
+                        this.fishCountData = [
+                            { name: "Kenai River", lat: 60.5, lon: -150.5, species: ["sockeye", "chinook"] },
+                            { name: "Kasilof River", lat: 60.3, lon: -151.2, species: ["sockeye", "coho"] },
+                            { name: "Russian River", lat: 60.4, lon: -150.7, species: ["sockeye"] },
+                            { name: "Situk River", lat: 59.5, lon: -139.5, species: ["chinook", "sockeye"] },
+                            { name: "Auke Creek", lat: 58.4, lon: -134.4, species: ["sockeye", "coho"] }
+                        ];
+                        
+                        console.log('Data loaded:', {
+                            bearPoints: this.bearData.length,
+                            awcFeatures: this.awcData.features.length,
+                            fishStations: this.fishCountData.length
+                        });
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                    }
+                },
+
+                initMap() {
+                    // Initialize map centered on Alaska with broader view
+                    this.map = L.map('map').setView([63.0, -150.0], 5);
+                    
+                    // Add base tile layer
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(this.map);
+                    
+                    // Initialize layer groups
+                    this.bearLayerGroup = L.layerGroup().addTo(this.map);
+                    this.awcLayerGroup = L.layerGroup().addTo(this.map);
+                    this.fishCountLayerGroup = L.layerGroup().addTo(this.map);
+                },
+
+                addLayers() {
+                    this.addBearLayer();
+                    this.addAWCLayer();
+                    this.addFishCountLayer();
+                    this.updateCounters();
+                },
+
+                addBearLayer() {
+                    this.bearLayerGroup.clearLayers();
+                    
+                    let filteredData = this.bearData;
+                    
+                    // Apply filters
+                    if (this.filterByActivity) {
+                        filteredData = filteredData.filter(point => point.activity_level > 50);
+                    }
+                    if (this.filterByYear) {
+                        filteredData = filteredData.filter(point => point.year >= 2013);
+                    }
+                    
+                    // Group data by bear_id and sort by date
+                    const bearTracks = {};
+                    filteredData.forEach(point => {
+                        if (!bearTracks[point.bear_id]) {
+                            bearTracks[point.bear_id] = [];
+                        }
+                        bearTracks[point.bear_id].push(point);
+                    });
+                    
+                    console.log('Total filtered data points:', filteredData.length);
+                    console.log('Unique bears found:', Object.keys(bearTracks).length);
+                    console.log('Bear IDs:', Object.keys(bearTracks));
+                    
+                    // Debug: Check why bears are being filtered out
+                    const allBearIds = [...new Set(this.bearData.map(point => point.bear_id))];
+                    console.log('All bear IDs in dataset:', allBearIds.length, allBearIds.slice(0, 10));
+                    
+                    // Check coordinate filtering
+                    const validCoords = this.bearData.filter(point => {
+                        const lat = point.latitude;
+                        const lon = point.longitude;
+                        return lat >= 51.0 && lat <= 72.0 && lon >= -180.0 && lon <= -130.0;
+                    });
+                    console.log('Points with valid Alaska coordinates:', validCoords.length);
+                    
+                    // Check GPS quality filtering
+                    const validGPS = validCoords.filter(point => {
+                        if (this.filterByQuality) {
+                            return !point.pdop || point.pdop < 5;
+                        } else {
+                            return !point.pdop || point.pdop < 15;
+                        }
+                    });
+                    console.log('Points with valid GPS quality:', validGPS.length);
+                    
+                    // Sort each bear's track by date
+                    Object.keys(bearTracks).forEach(bearId => {
+                        bearTracks[bearId].sort((a, b) => new Date(a.date) - new Date(b.date));
+                    });
+                    
+                    // Create track lines for each bear
+                    let processedBears = 0;
+                    Object.keys(bearTracks).forEach(bearId => {
+                        const track = bearTracks[bearId];
+                        if (track.length < 2) {
+                            console.log(`Skipping ${bearId}: only ${track.length} points`);
+                            return; // Need at least 2 points for a line
+                        }
+                        
+                        // Filter and validate GPS coordinates
+                        const validPoints = track.filter(point => {
+                            // Check for valid coordinates within Kodiak area
+                            const lat = point.latitude;
+                            const lon = point.longitude;
+                            
+                            // Basic coordinate validation
+                            if (!lat || !lon || isNaN(lat) || isNaN(lon)) return false;
+                            
+                            // Check if coordinates are within Alaska bounds
+                            if (lat < 51.0 || lat > 72.0 || lon < -180.0 || lon > -130.0) return false;
+                            
+                            // Check GPS quality based on filter setting
+                            if (this.filterByQuality) {
+                                // High quality only (PDOP < 5)
+                                if (point.pdop && point.pdop >= 5) return false;
+                            } else {
+                                // Standard quality (PDOP < 15) - more lenient to show more bears
+                                if (point.pdop && point.pdop > 15) return false;
+                            }
+                            
+                            return true;
+                        });
+                        
+                        if (validPoints.length < 2) {
+                            console.log(`Skipping ${bearId}: only ${validPoints.length} valid points (${track.length} total)`);
+                            return; // Need at least 2 valid points
+                        }
+                        
+                        console.log(`Processing ${bearId}: ${validPoints.length} valid points out of ${track.length} total`);
+                        
+                        // Sort by date to ensure proper sequence
+                        validPoints.sort((a, b) => new Date(a.date) - new Date(b.date));
+                        
+                        // Create coordinates array for the track line
+                        const coordinates = validPoints.map(point => [point.latitude, point.longitude]);
+                        
+                        // Calculate average activity for the track
+                        const avgActivity = validPoints.reduce((sum, point) => sum + point.activity_level, 0) / validPoints.length;
+                        
+                        // Create the track line with bear-specific color
+                        const trackLine = L.polyline(coordinates, {
+                            color: this.getBearColor(bearId),
+                            weight: 4,
+                            opacity: 0.9,
+                            smoothFactor: 1,
+                            lineCap: 'round',
+                            lineJoin: 'round',
+                            bearId: bearId // Store bear ID for highlighting
+                        });
+                        
+                        // Add hover/click functionality to highlight this track
+                        trackLine.on('mouseover click', () => {
+                            this.highlightBearTrack(bearId);
+                        });
+                        
+                        trackLine.on('mouseout', () => {
+                            this.resetBearTrackOpacity();
+                        });
+                        
+                        // Add start marker (bigger and more prominent)
+                        const startMarker = L.circleMarker(coordinates[0], {
+                            radius: 12,
+                            fillColor: '#10B981', // Green for start
+                            color: '#000',
+                            weight: 3,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        });
+                        
+                        // Add popup to start marker
+                        startMarker.bindPopup(`
+                            <div class="text-sm">
+                                <strong>🚀 ${bearId} - Track Start</strong><br>
+                                <strong>Date:</strong> ${validPoints[0].date}<br>
+                                <strong>Activity:</strong> ${validPoints[0].activity_level}%<br>
+                                <strong>Location:</strong> ${validPoints[0].latitude.toFixed(4)}, ${validPoints[0].longitude.toFixed(4)}<br>
+                                <strong>Total Points:</strong> ${validPoints.length}
+                            </div>
+                        `);
+                        
+                        // Add end marker (bigger and more prominent)
+                        const endMarker = L.circleMarker(coordinates[coordinates.length - 1], {
+                            radius: 12,
+                            fillColor: '#EF4444', // Red for end
+                            color: '#000',
+                            weight: 3,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        });
+                        
+                        // Add popup to end marker
+                        endMarker.bindPopup(`
+                            <div class="text-sm">
+                                <strong>🏁 ${bearId} - Track End</strong><br>
+                                <strong>Date:</strong> ${validPoints[validPoints.length - 1].date}<br>
+                                <strong>Activity:</strong> ${validPoints[validPoints.length - 1].activity_level}%<br>
+                                <strong>Location:</strong> ${validPoints[validPoints.length - 1].latitude.toFixed(4)}, ${validPoints[validPoints.length - 1].longitude.toFixed(4)}<br>
+                                <strong>Duration:</strong> ${this.calculateDuration(validPoints[0].date, validPoints[validPoints.length - 1].date)} days
+                            </div>
+                        `);
+                        
+                        // Add individual GPS point markers along the track (if enabled)
+                        const pointMarkers = [];
+                        if (this.showGPSPoints && validPoints.length > 2) {
+                            // Only show GPS points for tracks with more than 2 points
+                            // Sample every 5th point to avoid overcrowding
+                            validPoints.forEach((point, index) => {
+                                // Skip start and end points (already have special markers)
+                                if (index === 0 || index === validPoints.length - 1) return;
+                                
+                                // Only show every 5th point to reduce clutter
+                                if (index % 5 !== 0) return;
+                                
+                                const pointMarker = L.circleMarker([point.latitude, point.longitude], {
+                                    radius: 2,
+                                    fillColor: this.getBearColor(bearId),
+                                    color: '#000',
+                                    weight: 1,
+                                    opacity: 0.6,
+                                    fillOpacity: 0.8
+                                });
+                                
+                                // Add popup for individual GPS point
+                                pointMarker.bindPopup(`
+                                    <div class="text-sm">
+                                        <strong>${bearId} - GPS Point ${index + 1}</strong><br>
+                                        <strong>Date:</strong> ${point.date}<br>
+                                        <strong>Activity:</strong> ${point.activity_level}%<br>
+                                        <strong>Location:</strong> ${point.latitude.toFixed(4)}, ${point.longitude.toFixed(4)}<br>
+                                        <strong>PDOP:</strong> ${point.pdop || 'N/A'}<br>
+                                        <strong>Temp:</strong> ${point.temp_c || 'N/A'}°C
+                                    </div>
+                                `);
+                                
+                                pointMarkers.push(pointMarker);
+                            });
+                        }
+                        
+                        // Create popup content
+                        const startDate = validPoints[0].date;
+                        const endDate = validPoints[validPoints.length - 1].date;
+                        const popupContent = `
+                            <div class="text-sm">
+                                <strong>Bear Track: ${bearId}</strong><br>
+                                <strong>Start:</strong> ${startDate}<br>
+                                <strong>End:</strong> ${endDate}<br>
+                                <strong>Valid Points:</strong> ${validPoints.length}<br>
+                                <strong>Total Points:</strong> ${track.length}<br>
+                                <strong>Avg Activity:</strong> ${avgActivity.toFixed(1)}%<br>
+                                <strong>Duration:</strong> ${this.calculateDuration(startDate, endDate)} days
+                            </div>
+                        `;
+                        
+                        // Bind popup to the track line
+                        trackLine.bindPopup(popupContent);
+                        
+                        // Store all layers for this bear in bearTrackLayers
+                        this.bearTrackLayers[bearId] = [trackLine, startMarker, endMarker, ...pointMarkers];
+                        
+                        // Add markers and line to layer group (all bears selected by default)
+                        this.bearLayerGroup.addLayer(trackLine);
+                        this.bearLayerGroup.addLayer(startMarker);
+                        this.bearLayerGroup.addLayer(endMarker);
+                        
+                        // Add all GPS point markers
+                        pointMarkers.forEach(marker => {
+                            this.bearLayerGroup.addLayer(marker);
+                        });
+                        
+                        processedBears++;
+                    });
+                    
+                    console.log(`Processed ${processedBears} bear tracks out of ${Object.keys(bearTracks).length} total bears`);
+                    console.log('Bear tracks data:', Object.keys(bearTracks).map(bearId => ({
+                        bearId,
+                        totalPoints: bearTracks[bearId].length,
+                        validPoints: bearTracks[bearId].filter(point => {
+                            const lat = point.latitude;
+                            const lon = point.longitude;
+                            return lat >= 51.0 && lat <= 72.0 && lon >= -180.0 && lon <= -130.0;
+                        }).length
+                    })));
+                    this.visibleBearPoints = processedBears;
+                    
+                    // Initialize bear selection after processing all tracks
+                    this.initializeBearSelection();
+                },
+
+                addAWCLayer() {
+                    this.awcLayerGroup.clearLayers();
+                    
+                    this.awcData.features.forEach(feature => {
+                        const species = feature.properties.species.join(', ');
+                        const color = this.getSpeciesColor(feature.properties.species[0]);
+                        
+                        const polyline = L.polyline(feature.geometry.coordinates, {
+                            color: color,
+                            weight: 3,
+                            opacity: 0.8
+                        });
+                        
+                        polyline.bindPopup(`
+                            <div class="text-sm">
+                                <strong>${feature.properties.name}</strong><br>
+                                <strong>Type:</strong> ${feature.properties.type}<br>
+                                <strong>Species:</strong> ${species}<br>
+                                <strong>Life Stages:</strong> ${feature.properties.life_stages.join(', ')}
+                            </div>
+                        `);
+                        
+                        this.awcLayerGroup.addLayer(polyline);
+                    });
+                    
+                    this.visibleAWCFeatures = this.awcData.features.length;
+                },
+
+                addFishCountLayer() {
+                    this.fishCountLayerGroup.clearLayers();
+                    
+                    this.fishCountData.forEach(station => {
+                        const marker = L.marker([station.lat, station.lon], {
+                            icon: L.divIcon({
+                                className: 'fish-count-marker',
+                                html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>',
+                                iconSize: [16, 16]
+                            })
+                        });
+                        
+                        marker.bindPopup(`
+                            <div class="text-sm">
+                                <strong>${station.name}</strong><br>
+                                <strong>Species:</strong> ${station.species.join(', ')}<br>
+                                <strong>Type:</strong> Fish Count Station
+                            </div>
+                        `);
+                        
+                        this.fishCountLayerGroup.addLayer(marker);
+                    });
+                    
+                    this.visibleFishStations = this.fishCountData.length;
+                },
+
+                getActivityColor(activity) {
+                    if (activity > 70) return '#EF4444'; // Red
+                    if (activity > 50) return '#F59E0B'; // Yellow
+                    return '#10B981'; // Green
+                },
+
+                getBearColor(bearId) {
+                    // Extract bear number from bearId (e.g., "Bear_515" -> 515)
+                    const bearNum = parseInt(bearId.replace('Bear_', ''));
+                    
+                    // Define a palette of distinct colors for bears
+                    const colors = [
+                        '#EF4444', // Red
+                        '#3B82F6', // Blue
+                        '#10B981', // Green
+                        '#F59E0B', // Yellow
+                        '#8B5CF6', // Purple
+                        '#EC4899', // Pink
+                        '#06B6D4', // Cyan
+                        '#84CC16', // Lime
+                        '#F97316', // Orange
+                        '#6366F1', // Indigo
+                        '#14B8A6', // Teal
+                        '#DC2626', // Red-600
+                        '#2563EB', // Blue-600
+                        '#059669', // Green-600
+                        '#D97706', // Yellow-600
+                        '#7C3AED', // Purple-600
+                        '#DB2777', // Pink-600
+                        '#0891B2', // Cyan-600
+                        '#65A30D', // Lime-600
+                        '#EA580C'  // Orange-600
+                    ];
+                    
+                    return colors[bearNum % colors.length];
+                },
+
+                highlightBearTrack(selectedBearId) {
+                    // Go through all layers in the bear layer group
+                    this.bearLayerGroup.eachLayer((layer) => {
+                        if (layer instanceof L.Polyline) {
+                            // Find the bear ID for this track (stored in layer options)
+                            const layerBearId = layer.options.bearId;
+                            if (layerBearId && layerBearId !== selectedBearId) {
+                                // Fade out other tracks to 10% opacity
+                                layer.setStyle({ opacity: 0.1 });
+                            } else if (layerBearId === selectedBearId) {
+                                // Keep selected track at full opacity and make it thicker
+                                layer.setStyle({ opacity: 0.9, weight: 6 });
+                            }
+                        }
+                    });
+                },
+
+                resetBearTrackOpacity() {
+                    // Reset all tracks to normal opacity
+                    this.bearLayerGroup.eachLayer((layer) => {
+                        if (layer instanceof L.Polyline) {
+                            layer.setStyle({ opacity: 0.9, weight: 4 });
+                        }
+                    });
+                },
+
+                // Bear Selection Methods
+                initializeBearSelection() {
+                    // Initialize selectedBears object with all bears selected by default
+                    const uniqueBears = [...new Set(this.bearData.map(point => point.bear_id))];
+                    uniqueBears.forEach(bearId => {
+                        this.selectedBears[bearId] = true;
+                    });
+                },
+
+                selectAllBears() {
+                    Object.keys(this.selectedBears).forEach(bearId => {
+                        this.selectedBears[bearId] = true;
+                        this.showBearTrack(bearId);
+                    });
+                },
+
+                deselectAllBears() {
+                    Object.keys(this.selectedBears).forEach(bearId => {
+                        this.selectedBears[bearId] = false;
+                        this.hideBearTrack(bearId);
+                    });
+                },
+
+                toggleBearTrack(bearId) {
+                    if (this.selectedBears[bearId]) {
+                        this.showBearTrack(bearId);
+                    } else {
+                        this.hideBearTrack(bearId);
+                    }
+                },
+
+                showBearTrack(bearId) {
+                    // Show the bear track if it exists in bearTrackLayers
+                    if (this.bearTrackLayers[bearId]) {
+                        this.bearTrackLayers[bearId].forEach(layer => {
+                            this.bearLayerGroup.addLayer(layer);
+                        });
+                    }
+                },
+
+                hideBearTrack(bearId) {
+                    // Hide the bear track if it exists in bearTrackLayers
+                    if (this.bearTrackLayers[bearId]) {
+                        this.bearTrackLayers[bearId].forEach(layer => {
+                            this.bearLayerGroup.removeLayer(layer);
+                        });
+                    }
+                },
+
+                getBearDataCount(bearId) {
+                    // Get the number of GPS points for a specific bear
+                    return this.bearData.filter(point => point.bear_id === bearId).length;
+                },
+
+                toggleYears() {
+                    // Placeholder for year toggle functionality
+                    console.log('Toggle years functionality - to be implemented');
+                },
+
+                getSpeciesColor(species) {
+                    const colors = {
+                        'chinook': '#3B82F6', // Blue
+                        'sockeye': '#EF4444', // Red
+                        'coho': '#10B981',    // Green
+                        'pink': '#EC4899',    // Pink
+                        'chum': '#F59E0B'     // Yellow
+                    };
+                    return colors[species] || '#6B7280';
+                },
+
+                calculateDuration(startDate, endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays;
+                },
+
+                toggleBearLayer() {
+                    if (this.showBearData) {
+                        this.map.addLayer(this.bearLayerGroup);
+                    } else {
+                        this.map.removeLayer(this.bearLayerGroup);
+                    }
+                    this.updateCounters();
+                },
+
+                toggleAWCLayer() {
+                    if (this.showAWCData) {
+                        this.map.addLayer(this.awcLayerGroup);
+                    } else {
+                        this.map.removeLayer(this.awcLayerGroup);
+                    }
+                    this.updateCounters();
+                },
+
+                toggleFishCountLayer() {
+                    if (this.showFishCounts) {
+                        this.map.addLayer(this.fishCountLayerGroup);
+                    } else {
+                        this.map.removeLayer(this.fishCountLayerGroup);
+                    }
+                    this.updateCounters();
+                },
+
+                updateBearLayer() {
+                    this.addBearLayer();
+                    this.toggleBearLayer();
+                },
+
+                updateCounters() {
+                    this.visibleBearPoints = this.showBearData ? this.bearLayerGroup.getLayers().length : 0;
+                    this.visibleAWCFeatures = this.showAWCData ? this.awcLayerGroup.getLayers().length : 0;
+                    this.visibleFishStations = this.showFishCounts ? this.fishCountLayerGroup.getLayers().length : 0;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

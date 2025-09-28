@@ -1,0 +1,218 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kenai River",
+        "type": "river",
+        "region": "southcentral",
+        "species": [
+          "chinook",
+          "sockeye",
+          "coho",
+          "pink",
+          "chum"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing",
+          "migration"
+        ],
+        "description": "Kenai River - chinook, sockeye, coho, pink, chum"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -150.5,
+            60.5
+          ],
+          [
+            -150.3,
+            60.4
+          ],
+          [
+            -150.1,
+            60.3
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kasilof River",
+        "type": "river",
+        "region": "southcentral",
+        "species": [
+          "sockeye",
+          "coho",
+          "chinook"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing"
+        ],
+        "description": "Kasilof River - sockeye, coho, chinook"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -151.2,
+            60.3
+          ],
+          [
+            -151.0,
+            60.2
+          ],
+          [
+            -150.8,
+            60.1
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Russian River",
+        "type": "river",
+        "region": "southcentral",
+        "species": [
+          "sockeye",
+          "coho"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing"
+        ],
+        "description": "Russian River - sockeye, coho"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -150.7,
+            60.4
+          ],
+          [
+            -150.6,
+            60.3
+          ],
+          [
+            -150.5,
+            60.2
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Situk River",
+        "type": "river",
+        "region": "southeast",
+        "species": [
+          "chinook",
+          "sockeye",
+          "coho",
+          "pink",
+          "chum"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing",
+          "migration"
+        ],
+        "description": "Situk River - chinook, sockeye, coho, pink, chum"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -139.5,
+            59.5
+          ],
+          [
+            -139.3,
+            59.4
+          ],
+          [
+            -139.1,
+            59.3
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Auke Creek",
+        "type": "creek",
+        "region": "southeast",
+        "species": [
+          "sockeye",
+          "coho"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing"
+        ],
+        "description": "Auke Creek - sockeye, coho"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -134.4,
+            58.4
+          ],
+          [
+            -134.3,
+            58.3
+          ],
+          [
+            -134.2,
+            58.2
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Salcha River",
+        "type": "river",
+        "region": "interior",
+        "species": [
+          "chinook",
+          "chum"
+        ],
+        "life_stages": [
+          "spawning",
+          "rearing"
+        ],
+        "description": "Salcha River - chinook, chum"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -146.5,
+            64.5
+          ],
+          [
+            -146.3,
+            64.4
+          ],
+          [
+            -146.1,
+            64.3
+          ]
+        ]
+      }
+    }
+  ]
+}
