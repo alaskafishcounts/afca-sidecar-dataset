@@ -57,14 +57,31 @@ This repository serves as a supplementary data source for the main Alaska Fish C
 - Integrated into analysis tools
 - Shared with research partners
 
+## Citation & Attribution Standards
+
+**🏆 GOLD STANDARD REQUIRED**: All projects in this repository must follow the comprehensive citation and attribution standards documented in `CITATION_STANDARDS.md`. This represents the highest possible level of data source documentation and attribution.
+
+### Mandatory Requirements
+- **Complete Data Source Attribution**: Every dataset must include comprehensive source documentation
+- **Academic Citation Standards**: Full academic citation formats required
+- **Technical Documentation**: Complete methodology and technical specifications
+- **Legal & Ethical Framework**: Permits, compliance, and usage rights documentation
+- **Quality Assurance**: Data validation and quality control documentation
+- **Contact Information**: Complete contact details for all data sources
+
+### Reference Implementation
+See `gps-data-projects/kodiak-bear-gps/README.md` for a complete implementation of the gold standard citation requirements.
+
 ## Contributing
 
 When adding new projects:
-1. Create a descriptive directory name
-2. Include comprehensive README documentation
-3. Follow AFCA naming conventions
-4. Ensure data quality and proper attribution
-5. Update this main README with project descriptions
+1. **MANDATORY**: Follow the gold standard citation template in `CITATION_STANDARDS.md`
+2. Create a descriptive directory name
+3. Include comprehensive README documentation using the mandatory template
+4. Follow AFCA naming conventions
+5. Ensure data quality and proper attribution to the highest standards
+6. Update this main README with project descriptions
+7. **VERIFY**: All citations are complete, accurate, and verifiable
 
 ## License
 
