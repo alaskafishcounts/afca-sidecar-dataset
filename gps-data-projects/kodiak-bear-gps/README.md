@@ -77,11 +77,12 @@ This data can be used for:
 **Scientific Significance**: Long-term dataset for understanding bear behavior and salmon ecosystem dynamics
 
 ### Data Processing & Integration
-**Processing Date**: September 10, 2025
+**Processing Date**: September 28, 2025
 **Processing Method**: Data.gov API extraction and JSON formatting
 **API Key**: DFvU75iyqk... (truncated for security)
 **Integration Purpose**: AFCA ecosystem context and wildlife movement analysis
 **Data Standardization**: Converted to AFCA-compatible JSON format with metadata preservation
+**AFCA Integration**: Processed and integrated by Alaska Fish Count App for ecosystem analysis
 
 ### Legal & Ethical Framework
 **Data Collection Permits**: USFWS research permits and wildlife handling protocols
@@ -177,7 +178,7 @@ This GPS data complements the fish count data in AFCA by providing:
 **Kodiak National Wildlife Refuge Research Program. (2008-2015). Bear-salmon ecosystem interaction study: GPS tracking of female Kodiak bears during peak salmon spawning periods. U.S. Fish and Wildlife Service, Alaska Region. Principal Investigator: Todd Sutherland.**
 
 ### Data Processing Citation
-**Alaska Fish Count App (AFCA) Sidecar Dataset. (2025). Processed Kodiak bear GPS tracking data for ecosystem analysis. Original source: U.S. Fish and Wildlife Service (2008-2015). Processing date: September 10, 2025. Integration: AFCA ecosystem context and wildlife movement analysis.**
+**Alaska Fish Count App (AFCA) Sidecar Dataset. (2025). Processed Kodiak bear GPS tracking data for ecosystem analysis. Original source: U.S. Fish and Wildlife Service (2008-2015). Processing date: September 28, 2025. Integration: AFCA ecosystem context and wildlife movement analysis.**
 
 ### Technical Documentation Citation
 **Sutherland, T., U.S. Fish and Wildlife Service. (2015). Technical specifications for Kodiak bear GPS collar deployment and data collection protocols. Kodiak National Wildlife Refuge Research Program. Contact: todd_sutherland@fws.gov**
@@ -210,7 +211,7 @@ This GPS data complements the fish count data in AFCA by providing:
 **Academic Standards**: Full citation required for publications and research
 
 ### AFCA Integration Citation
-**Alaska Fish Count App Sidecar Dataset Repository. (2025). Kodiak bear GPS tracking data integration for ecosystem analysis. Original data source: U.S. Fish and Wildlife Service (2008-2015). Repository: https://github.com/alaskafishcounts/afca-sidecar-dataset. Integration purpose: Wildlife movement context for fish count data analysis.**
+**Alaska Fish Count App Sidecar Dataset Repository. (2025). Kodiak bear GPS tracking data integration for ecosystem analysis. Original data source: U.S. Fish and Wildlife Service (2008-2015). Repository: https://github.com/alaskafishcounts/afca-sidecar-dataset. Integration date: September 28, 2025. Integration purpose: Wildlife movement context for fish count data analysis.**
 
 ### Legal & Ethical Citation Framework
 **Research Permits**: USFWS wildlife research permits and handling protocols
@@ -235,4 +236,4 @@ This GPS data complements the fish count data in AFCA by providing:
 
 ## Last Updated
 
-Data processed and organized for AFCA sidecar dataset repository (January 2025).
+Data processed and organized for AFCA sidecar dataset repository (September 28, 2025).
