@@ -1,0 +1,185 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-09-28T15:30:00.000000",
+  "repository": "https://github.com/alaskafishcounts/afca-sidecar-dataset",
+  "description": "AFCA Sidecar Dataset Repository for special projects and supplementary data",
+  "total_files": 20,
+  
+  "organized_by_project_type": {
+    "gps_data_projects": {
+      "kodiak-bear-gps": {
+        "name": "Kodiak Bear GPS Tracking Data",
+        "description": "GPS tracking data for Kodiak bears during salmon spawning season",
+        "files": {
+          "kodiak-bear-gps-data.json": {
+            "size_bytes": 57432192,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "data_source": "USFWS",
+            "metadata": {
+              "study_period": "2008-2015",
+              "sample_size": "51 female bears",
+              "total_records": 172545
+            }
+          },
+          "readme.md": {
+            "size_bytes": 8492,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "documentation",
+            "description": "Project documentation and data source attribution"
+          }
+        },
+        "total_files": 2,
+        "total_size_bytes": 57440684,
+        "data_sources": [
+          {
+            "agency": "U.S. Fish and Wildlife Service",
+            "contact": "Todd Sutherland (todd_sutherland@fws.gov)",
+            "dataset_url": "https://catalog.data.gov/dataset/kodiak-bear-gps-collar-fix-location-data"
+          }
+        ]
+      }
+    },
+    "geojson_data": {
+      "awc-layers": {
+        "name": "Alaska Water Bodies Layers",
+        "description": "Geographic data for Alaska water bodies organized by region",
+        "files": {
+          "awc-waterbodies.geojson": {
+            "size_bytes": 1258496,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "geojson",
+            "features": "multiple regions"
+          },
+          "download-metadata.json": {
+            "size_bytes": 2048,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "metadata",
+            "description": "Data download and processing metadata"
+          },
+          "sample-awc-data.json": {
+            "size_bytes": 4096,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "sample_data",
+            "description": "Sample Alaska Water Bodies data"
+          },
+          "README.md": {
+            "size_bytes": 3072,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "documentation",
+            "description": "Alaska Water Bodies data documentation"
+          }
+        },
+        "regions": {
+          "arctic": {
+            "zip_file": "arctic.zip",
+            "files_count": 150
+          },
+          "interior": {
+            "zip_file": "interior.zip", 
+            "files_count": 142
+          },
+          "southcentral": {
+            "zip_file": "southcentral.zip",
+            "files_count": 168
+          },
+          "southeast": {
+            "zip_file": "southeast.zip",
+            "files_count": 134
+          },
+          "southwest": {
+            "zip_file": "southwest.zip",
+            "files_count": 156
+          },
+          "statewide": {
+            "zip_file": "statewide.zip",
+            "files_count": 892
+          },
+          "western": {
+            "zip_file": "western.zip",
+            "files_count": 143
+          },
+          "species_life_stage": {
+            "zip_file": "species_life_stage.zip",
+            "files_count": 89
+          }
+        },
+        "total_files": 14,
+        "total_size_bytes": 1274880
+      }
+    },
+    "research_projects": {
+      "placeholder": {
+        "name": "Future Research Projects",
+        "description": "Directory for academic research collaborations",
+        "status": "ready_for_projects",
+        "files": {
+          "README.md": {
+            "size_bytes": 2048,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "documentation"
+          }
+        },
+        "total_files": 1,
+        "total_size_bytes": 2048
+      }
+    },
+    "supplementary_data": {
+      "placeholder": {
+        "name": "Future Supplementary Data",
+        "description": "Directory for environmental, historical, and management data",
+        "status": "ready_for_projects",
+        "files": {
+          "README.md": {
+            "size_bytes": 2048,
+            "last_modified": "2025-09-28T15:30:00.000000",
+            "type": "documentation"
+          }
+        },
+        "total_files": 1,
+        "total_size_bytes": 2048
+      }
+    }
+  },
+  
+  "index": {
+    "project_types": {
+      "GPS_DATA": ["kodiak-bear-gps"],
+      "GEOJSON_DATA": ["awc-layers"],
+      "RESEARCH_PROJECTS": ["placeholder"],
+      "SUPPLEMENTARY_DATA": ["placeholder"]
+    },
+    "data_sources": {
+      "USFWS": ["kodiak-bear-gps"],
+      "ALASKA_WATER_BODIES": ["awc-layers"]
+    },
+    "regions": {
+      "KODIAK_ISLAND": ["kodiak-bear-gps"],
+      "STATEWIDE": ["awc-layers"]
+    }
+  },
+  
+  "statistics": {
+    "total_project_types": 4,
+    "total_projects": 4,
+    "total_files": 20,
+    "total_size_bytes": 58789740,
+    "largest_project": "kodiak-bear-gps",
+    "largest_project_size": 57440684,
+    "data_types": ["GPS", "GeoJSON", "JSON", "Markdown", "ZIP"],
+    "primary_sources": ["USFWS", "Alaska Water Bodies Database"]
+  },
+  
+  "patterns": {
+    "gps_projects": "gps-data-projects/[project-name]/[project-name]-data.json",
+    "geojson_projects": "geojson-data/[project-name]/[file-name].geojson",
+    "research_projects": "research-projects/[project-name]/[project-files]",
+    "supplementary_data": "supplementary-data/[category]/[data-files]"
+  },
+  
+  "metadata": {
+    "afca_integration_date": "2025-09-28T15:30:00.000000",
+    "repository_purpose": "Special projects and supplementary data for AFCA ecosystem analysis",
+    "main_repository": "https://github.com/alaskafishcounts/adfg-dataset",
+    "contact": "alaskafishcountsapp@gmail.com"
+  }
+}
